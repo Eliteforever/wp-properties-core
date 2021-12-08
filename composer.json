@@ -1,0 +1,28 @@
+{
+  "name": "eliteforever/wp-properties-core",
+  "description": "description",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "erwin",
+      "email": "mail@erwin.dev"
+    }
+  ],
+  "require": {
+    "spatie/once": "^2.2"
+  },
+  "require-dev": {
+    "symfony/var-dumper": "v2.8.52"
+  },
+  "autoload": {
+    "psr-4": {
+      "Eliteforever\\WPPropertiesCore\\": "src/"
+    }
+  },
+  "scripts": {
+    "lint": [
+      "phpcs ."
+    ]
+  }
+}
