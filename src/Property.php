@@ -2,29 +2,51 @@
 
 namespace Eliteforever\WPPropertiesCore;
 
-use Eliteforever\WPPropertiesCore\Registry\PropertyRegistry;
-
+/**
+ * @property mixed value
+ * @property mixed wordpressValue
+ */
 class Property
 {
-    private PropertyTypeInterface $type;
     public string $identifier;
     private bool $validation = false;
-    public $value;
+    protected PropertyTypeInterface $type;
+    protected $internalValue = null;
+    protected $internalWordpressValue = null;
 
     public function __construct(PropertyTypeInterface $type, string $identifier, $value)
     {
         $this->type = $type;
         $this->identifier = $identifier;
-        $this->value = $value;
+        $this->internalValue = $value;
     }
 
-    public static function get(string $identifier): ?Property
+    public function __set($name, $value)
     {
-        return PropertyRegistry::of()->get($identifier);
+        switch ($name) {
+            case 'value':
+                $this->internalValue = $value;
+                break;
+            case 'wordpressValue':
+                $this->internalWordpressValue = $value;
+                break;
+        }
     }
 
-    public static function createType(): PropertyTypeBuilder
+    public function __get($name)
     {
-        return new PropertyType();
+        switch ($name) {
+            case 'value':
+                return $this->internalValue;
+            case 'wordpressValue':
+                return $this->internalWordpressValue;
+        }
+
+        throw new \Exception("Property $name does not exist.");
+    }
+
+    public function load()
+    {
+        return $this->__get($this->type->getName());
     }
 }
