@@ -2,25 +2,27 @@
 
 namespace Eliteforever\WPPropertiesCore;
 
-class PropertyType implements PropertyTypeInterface, PropertyTypeBuilder
+use Eliteforever\WPPropertiesCore\Store\PropertyStoreInterface;
+
+abstract class PropertyBuilder implements PropertyBuilderInterface
 {
     private string $key;
     private string $name;
-    private ?PropertyType $parent;
+    private ?PropertyBuilder $parent;
 
     private \Closure $propertyFactory;
-    private \Closure $propertyStore;
+    protected PropertyStoreInterface $store;
 
     public function __construct(
         callable $propertyFactory,
-        callable $propertyStore,
+        PropertyStoreInterface $store,
         ?string $key = null,
         ?string $name = null
     ) {
         $this->key = $key ?? bin2hex(random_bytes(16));
         $this->name = $name ?? $this->key;
         $this->setPropertyFactory($propertyFactory);
-        $this->setPropertyStore($propertyStore);
+        $this->setStore($store);
     }
 
     public function getKey(): string
@@ -56,14 +58,21 @@ class PropertyType implements PropertyTypeInterface, PropertyTypeBuilder
         return $this;
     }
 
-    public function setPropertyStore(callable $properyStore): self
+    public function setStore(PropertyStoreInterface $store): self
     {
-        $this->propertyStore = $properyStore;
+        $this->store = $store;
         return $this;
     }
 
-    public function build(): PropertyTypeInterface
+    public function getStore(): PropertyStoreInterface
     {
+        return $this->store;
+    }
+
+    public function setRules(array $rules): PropertyBuilderInterface
+    {
+        // TODO: Implement and use $rules.
+
         return $this;
     }
 }

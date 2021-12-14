@@ -4,49 +4,92 @@ namespace Eliteforever\WPPropertiesCore;
 
 /**
  * @property mixed value
- * @property mixed wordpressValue
  */
-class Property
+abstract class Property
 {
     public string $identifier;
-    private bool $validation = false;
-    protected PropertyTypeInterface $type;
-    protected $internalValue = null;
-    protected $internalWordpressValue = null;
 
-    public function __construct(PropertyTypeInterface $type, string $identifier, $value)
+    protected bool $dirty = false;
+    protected $internalValue = null;
+    protected $rawValue = null;
+
+    public function __construct(string $identifier, $value = null)
     {
-        $this->type = $type;
         $this->identifier = $identifier;
-        $this->internalValue = $value;
+
+        $value === null
+            ? $this->loadValue()
+            : $this->setValue($value);
     }
 
     public function __set($name, $value)
     {
-        switch ($name) {
-            case 'value':
-                $this->internalValue = $value;
-                break;
-            case 'wordpressValue':
-                $this->internalWordpressValue = $value;
-                break;
+        if ($name !== 'value') {
+            throw new \InvalidArgumentException("Property $name does not exist");
+        }
+
+        if ($this->rawValue === null) {
+            return;
+        }
+
+        if ($value !== $this->internalValue) {
+            // TODO: Validate value
+            $this->setValue($value);
+            $this->dirty = true;
+        }
+
+        if ($this->dirty) {
+            $this->store($this->internalValue);
         }
     }
 
     public function __get($name)
     {
-        switch ($name) {
-            case 'value':
-                return $this->internalValue;
-            case 'wordpressValue':
-                return $this->internalWordpressValue;
+        if ($name !== 'value') {
+            throw new \InvalidArgumentException("Property $name does not exist");
         }
 
-        throw new \Exception("Property $name does not exist.");
+        if ($this->dirty) {
+            $this->loadValue();
+            $this->dirty = false;
+        }
+
+        return $this->internalValue;
     }
 
-    public function load()
+    public function isDirty(): bool
     {
-        return $this->__get($this->type->getName());
+        return $this->dirty;
     }
+
+    public function getInternalValue()
+    {
+        return $this->internalValue;
+    }
+
+    protected function setValue($value)
+    {
+        $this->internalValue = $value;
+        $this->rawValue = $this->deserializeValue();
+    }
+
+    protected function loadValue()
+    {
+        $this->rawValue = $this->load();
+        $this->internalValue = $this->serializeValue();
+    }
+
+    protected function serializeValue()
+    {
+        return $this->rawValue;
+    }
+
+    protected function deserializeValue()
+    {
+        return $this->internalValue;
+    }
+
+    abstract public function load();
+
+    abstract public function store($value);
 }

@@ -3,7 +3,7 @@
 namespace Eliteforever\WPPropertiesCore\Registry;
 
 use Eliteforever\WPPropertiesCore\Property;
-use Eliteforever\WPPropertiesCore\PropertyTypeInterface;
+use Eliteforever\WPPropertiesCore\PropertyBuilder;
 
 class PropertyContainer
 {
@@ -11,23 +11,25 @@ class PropertyContainer
     private array $properties = [];
 
     /**
-     * @param PropertyTypeInterface[] $properties
+     * @param PropertyBuilder[] $properties
      */
     public function initialize(array $properties): void
     {
-        $this->registerProperties($properties);
+        $this->properties = collect($properties)
+            ->map(fn(PropertyBuilder $builder, string $key) => $builder->setKey($key))
+            ->map(fn(PropertyBuilder $builder) => $builder->build())
+            ->each(fn(Property $property) => $this->add($property))
+            ->toArray();
     }
 
-    public function set(string $identifier, $value = null): void
+    public function set(string $identifier, $value): void
     {
         $this->get($identifier)->value = $value;
     }
 
-    public function add(PropertyTypeInterface $propertyType, string $identifier, $value = null): Property
+    public function add(Property $property): Property
     {
-        $property = $propertyType->getPropertyFactory()($propertyType, $identifier, $value);
-
-        $this->properties[$identifier] = $property;
+        $this->properties[$property->identifier] = $property;
 
         return $property;
     }
@@ -43,12 +45,5 @@ class PropertyContainer
     public function all(): array
     {
         return $this->properties;
-    }
-
-    private function registerProperties(array $properties)
-    {
-        foreach ($properties as $name => $type) {
-            $this->add($type, $name);
-        }
     }
 }

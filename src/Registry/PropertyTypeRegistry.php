@@ -2,12 +2,11 @@
 
 namespace Eliteforever\WPPropertiesCore\Registry;
 
-use Eliteforever\WPPropertiesCore\PropertyTypeBuilder;
-use Eliteforever\WPPropertiesCore\PropertyTypeInterface;
+use Eliteforever\WPPropertiesCore\PropertyBuilderInterface;
 
 class PropertyTypeRegistry
 {
-    /** @var PropertyTypeInterface[] */
+    /** @var PropertyBuilderInterface[] */
     private array $propertyTypes = [];
 
     public static function of(): self
@@ -15,17 +14,22 @@ class PropertyTypeRegistry
         return once(fn(): self => new static());
     }
 
-    public function add(PropertyTypeBuilder ...$propertyTypes): void
+    public function add(PropertyBuilderInterface ...$properties): void
     {
-        foreach ($propertyTypes as $propertyType) {
-            $builtPropertyType = $propertyType->build();
+        foreach ($properties as $builder) {
+            $property = $builder->build();
 
-            $this->propertyTypes[$builtPropertyType->getName()] = $propertyType;
+            $this->propertyTypes[$property->identifier] = $property;
         }
     }
 
-    public function get(string $key): ?PropertyTypeInterface
+    public function get(string $key): ?PropertyBuilderInterface
     {
         return $this->propertyTypes[$key] ?? null;
+    }
+
+    public function all(): array
+    {
+        return $this->propertyTypes;
     }
 }

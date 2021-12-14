@@ -10,7 +10,8 @@
     }
   ],
   "require": {
-    "spatie/once": "^2.2"
+    "spatie/once": "^2.2",
+    "illuminate/support": "^8.75"
   },
   "require-dev": {
     "symfony/var-dumper": "v2.8.52",

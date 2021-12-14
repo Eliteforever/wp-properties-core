@@ -3,7 +3,6 @@
 namespace Eliteforever\WPPropertiesCore;
 
 use Eliteforever\WPPropertiesCore\Registry\PropertyContainer;
-use Eliteforever\WPPropertiesCore\Registry\PropertyTypeRegistry;
 
 trait HasProperties
 {
@@ -13,14 +12,7 @@ trait HasProperties
     {
         $this->propertyContainer = new PropertyContainer();
 
-        $propertyTypeRegistry = PropertyTypeRegistry::of();
-
-        // TODO: Use reflection to retrieve properties of type "^Setting", use its name for the key:
-        $this->propertyContainer->initialize(
-            [
-                'first' => $propertyTypeRegistry->get('hello-property'),
-            ]
-        );
+        $this->propertyContainer->initialize($this->properties());
 
         $this->bindProperties();
     }
@@ -38,4 +30,9 @@ trait HasProperties
             $property->load();
         }
     }
+
+    /**
+     * @return PropertyTypeBuilderRead[]
+     */
+    abstract protected function properties(): array;
 }

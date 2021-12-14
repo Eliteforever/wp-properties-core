@@ -3,40 +3,31 @@
 namespace Eliteforever\WPPropertiesCore\Settings;
 
 use Eliteforever\WPPropertiesCore\Property;
-use Eliteforever\WPPropertiesCore\PropertyType;
-use Eliteforever\WPPropertiesCore\PropertyTypeBuilder;
-use Eliteforever\WPPropertiesCore\PropertyTypeInterface;
+use Eliteforever\WPPropertiesCore\PropertyBuilderInterface;
 
 class Setting extends Property
 {
-    public static function createType(): PropertyTypeBuilder
+    public static function createType(): PropertyBuilderInterface
     {
-        return new SettingType();
-    }
-
-    public function __set($name, $value)
-    {
-        if (!update_option($this->type->getName(), $value)) {
-            throw new \InvalidArgumentException(
-                "Could not update option {$this->type->getName()} with $value. 
-                Debug the internal 'update_option' call to find out why."
-            );
-        }
-
-        parent::__set($name, $value);
+        return new SettingBuilder();
     }
 
     public function load()
     {
-        $value = get_option($this->type->getName());
+        return get_option($this->identifier);
+    }
 
-        if (!$value) {
-            throw new \InvalidArgumentException(
-                "Could not retrieve option {$this->type->getName()}. 
-                Debug the internal 'get_option' call to find out why."
-            );
+    public function store($value)
+    {
+        if ($this->internalValue) {
+            if (!update_option($this->identifier, $value)) {
+                throw new \InvalidArgumentException(
+                    "Could not update option {$this->identifier} with $value. 
+                Debug the internal 'update_option' call to find out why."
+                );
+            }
+        } else {
+            delete_option($this->identifier);
         }
-
-        return parent::load();
     }
 }
