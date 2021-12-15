@@ -3,7 +3,7 @@
 namespace Eliteforever\WPPropertiesCore\Settings;
 
 use Eliteforever\WPPropertiesCore\Property;
-use Eliteforever\WPPropertiesCore\PropertyBuilderInterface;
+use Eliteforever\WPPropertiesCore\BuilderInterface;
 
 class Setting extends Property
 {

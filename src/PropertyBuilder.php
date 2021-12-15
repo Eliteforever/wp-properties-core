@@ -4,7 +4,7 @@ namespace Eliteforever\WPPropertiesCore;
 
 use Eliteforever\WPPropertiesCore\Store\PropertyStoreInterface;
 
-abstract class PropertyBuilder implements PropertyBuilderInterface
+abstract class PropertyBuilder implements BuilderInterface
 {
     private string $key;
     private string $name;
@@ -62,7 +62,7 @@ abstract class PropertyBuilder implements PropertyBuilderInterface
         return $this->store;
     }
 
-    public function setRules(array $rules): PropertyBuilderInterface
+    public function setRules(array $rules): self
     {
         // TODO: Implement and use $rules.
 

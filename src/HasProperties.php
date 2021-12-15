@@ -32,7 +32,7 @@ trait HasProperties
     }
 
     /**
-     * @return PropertyTypeBuilderRead[]
+     * @return PropertyBuilder[]
      */
     abstract protected function properties(): array;
 }
