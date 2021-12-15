@@ -13,16 +13,9 @@ abstract class PropertyBuilder implements PropertyBuilderInterface
     private \Closure $propertyFactory;
     protected PropertyStoreInterface $store;
 
-    public function __construct(
-        callable $propertyFactory,
-        PropertyStoreInterface $store,
-        ?string $key = null,
-        ?string $name = null
-    ) {
-        $this->key = $key ?? bin2hex(random_bytes(16));
-        $this->name = $name ?? $this->key;
+    public function __construct(callable $propertyFactory)
+    {
         $this->setPropertyFactory($propertyFactory);
-        $this->setStore($store);
     }
 
     public function getKey(): string

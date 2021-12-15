@@ -2,6 +2,8 @@
 
 namespace Eliteforever\WPPropertiesCore;
 
+use Eliteforever\WPPropertiesCore\Settings\SettingBuilder;
+use Eliteforever\WPPropertiesCore\Settings\SettingStore;
 use Eliteforever\WPPropertiesCore\Store\PropertyStoreInterface;
 
 interface PropertyBuilderInterface
@@ -25,4 +27,6 @@ interface PropertyBuilderInterface
     public function getStore(): PropertyStoreInterface;
 
     public function build(): Property;
+
+    public static function of(): self;
 }

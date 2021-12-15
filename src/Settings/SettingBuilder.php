@@ -4,22 +4,23 @@ namespace Eliteforever\WPPropertiesCore\Settings;
 
 use Eliteforever\WPPropertiesCore\Property;
 use Eliteforever\WPPropertiesCore\PropertyBuilder;
+use Illuminate\Support\Str;
 
 class SettingBuilder extends PropertyBuilder
 {
-    public function __construct(?string $key = null, ?string $name = null)
+    private ?string $title = null;
+
+    public function __construct()
     {
         parent::__construct(
             fn(string $identifier) => new Setting($identifier),
-            new SettingStore(),
-            $key,
-            $name
         );
     }
 
     public function build(): Property
     {
         $property = $this->getPropertyFactory()($this->getKey());
+        $this->title ??= Str::title($this->getKey());
 
         add_action('admin_init', function () use ($property) {
             register_setting(
@@ -39,7 +40,7 @@ class SettingBuilder extends PropertyBuilder
             );
             add_settings_field(
                 $property->identifier,
-                'Enter custom message',
+                $this->getTitle(),
                 function () use ($property) {
                     $value = $property->value;
                     echo "<input 
@@ -56,5 +57,22 @@ value={$value}
         });
 
         return $property;
+    }
+
+    public function setTitle(string $label): self
+    {
+        $this->title = $label;
+        return $this;
+    }
+
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    public static function of(): self
+    {
+        return (new SettingBuilder())
+            ->setStore(new SettingStore());
     }
 }

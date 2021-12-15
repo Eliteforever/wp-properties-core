@@ -7,11 +7,6 @@ use Eliteforever\WPPropertiesCore\PropertyBuilderInterface;
 
 class Setting extends Property
 {
-    public static function createType(): PropertyBuilderInterface
-    {
-        return new SettingBuilder();
-    }
-
     public function load()
     {
         return get_option($this->identifier);
