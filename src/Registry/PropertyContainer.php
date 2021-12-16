@@ -16,7 +16,7 @@ class PropertyContainer
     public function initialize(array $properties): void
     {
         $this->properties = collect($properties)
-            ->map(fn(PropertyBuilder $builder, string $key) => $builder->setKey($key))
+            ->map(fn(PropertyBuilder $builder, string $key) => $builder->setKey($builder->getKey() ?? $key))
             ->map(fn(PropertyBuilder $builder) => $builder->build())
             ->each(fn(Property $property) => $this->add($property))
             ->toArray();

@@ -6,8 +6,8 @@ use Eliteforever\WPPropertiesCore\Store\PropertyStoreInterface;
 
 abstract class PropertyBuilder implements BuilderInterface
 {
-    private string $key;
-    private string $name;
+    private ?string $key = null;
+    private ?string $name = null;
     private ?PropertyBuilder $parent;
 
     private \Closure $propertyFactory;
@@ -18,7 +18,7 @@ abstract class PropertyBuilder implements BuilderInterface
         $this->setPropertyFactory($propertyFactory);
     }
 
-    public function getKey(): string
+    public function getKey(): ?string
     {
         return $this->key;
     }
@@ -29,7 +29,7 @@ abstract class PropertyBuilder implements BuilderInterface
         return $this;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }

@@ -8,11 +8,11 @@ trait HasProperties
 {
     private PropertyContainer $propertyContainer;
 
-    final protected function registerProperties()
+    final public function registerProperties(array $propertiesToInitialize): void
     {
         $this->propertyContainer = new PropertyContainer();
 
-        $this->propertyContainer->initialize($this->properties());
+        $this->propertyContainer->initialize($propertiesToInitialize);
 
         $this->bindProperties();
     }
@@ -32,7 +32,10 @@ trait HasProperties
     }
 
     /**
-     * @return PropertyBuilder[]
+     * @return Property[]
      */
-    abstract protected function properties(): array;
+    final public function getProperties(): array
+    {
+        return $this->propertyContainer->all();
+    }
 }
